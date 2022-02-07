@@ -312,7 +312,7 @@ public class InternalDBOperations {
     }
 
     public static boolean addCredential(Connection connection, Credential credential) {
-        String query = "insert into credentials(domain,jid,password) values(:domain,:jid,:password)";
+        final String query = "insert into credentials(domain,jid,password,failures) values(:domain,:jid,:password,0)";
         connection.createQuery(query).bind(credential).executeUpdate();
         return true;
     }
