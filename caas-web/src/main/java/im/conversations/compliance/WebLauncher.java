@@ -1,5 +1,6 @@
 package im.conversations.compliance;
 
+import static spark.Spark.*;
 
 import im.conversations.compliance.email.MailBuilder;
 import im.conversations.compliance.persistence.DBConnections;
@@ -16,8 +17,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.TemplateEngine;
 import spark.template.freemarker.FreeMarkerEngine;
-
-import static spark.Spark.*;
 
 public class WebLauncher {
 
@@ -46,12 +45,13 @@ public class WebLauncher {
         webSocket("/socket/*", TestLiveWebsocket.class);
         ipAddress(Configuration.getInstance().getIp());
         port(Configuration.getInstance().getPort());
-        before((request, response) -> {
-            if (!request.pathInfo().endsWith("/")) {
-                response.redirect(request.pathInfo() + "/");
-            }
-        });
-        get("/", Controller.getRoot,templateEngine);
+        before(
+                (request, response) -> {
+                    if (!request.pathInfo().endsWith("/")) {
+                        response.redirect(request.pathInfo() + "/");
+                    }
+                });
+        get("/", Controller.getRoot, templateEngine);
         get("/old/", Controller.getOld, templateEngine);
         get("/tests/", Controller.getTests, templateEngine);
         get("/about/", Controller.getAbout, templateEngine);
@@ -61,7 +61,10 @@ public class WebLauncher {
         get("/server/:domain/", Controller.getServer, templateEngine);
         get("/badge/:domain/", Controller.getBadge, templateEngine);
         get("/test/:test/", Controller.getTest, templateEngine);
-        get("/historic/server/:domain/iteration/:iteration/", Controller.getHistoricForServer, templateEngine);
+        get(
+                "/historic/server/:domain/iteration/:iteration/",
+                Controller.getHistoricForServer,
+                templateEngine);
         get("/historic/iteration/:iteration/", Controller.getHistoricTable, templateEngine);
 
         get("/api/compliant_servers/", Api.getCompliantServers);

@@ -8,9 +8,9 @@ import rocks.xmpp.core.stream.model.StreamFeature;
         short_name = "xep0198",
         full_name = "XEP-0198: Stream Management",
         url = "https://xmpp.org/extensions/xep-0198.html",
-        description = "Improves network reliability by adding support for resuming terminated streams " +
-                "and adding the ability to know if a stream has been received by peer."
-)
+        description =
+                "Improves network reliability by adding support for resuming terminated streams "
+                        + "and adding the ability to know if a stream has been received by peer.")
 public class StreamManagement extends AbstractStreamFeatureTest {
 
     public StreamManagement(XmppClient client) {

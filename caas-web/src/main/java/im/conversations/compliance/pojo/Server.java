@@ -45,10 +45,10 @@ public class Server {
     public boolean equals(Object o) {
         if (o instanceof Server) {
             Server s = (Server) o;
-            return domain.equals(s.domain) &&
-                    listed == s.listed &&
-                    Utils.nullableStringEqual(softwareName, s.softwareName) &&
-                    Utils.nullableStringEqual(softwareVersion, s.softwareVersion);
+            return domain.equals(s.domain)
+                    && listed == s.listed
+                    && Utils.nullableStringEqual(softwareName, s.softwareName)
+                    && Utils.nullableStringEqual(softwareVersion, s.softwareVersion);
         }
         return false;
     }

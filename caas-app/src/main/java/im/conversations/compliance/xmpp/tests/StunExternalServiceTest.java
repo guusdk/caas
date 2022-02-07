@@ -2,17 +2,15 @@ package im.conversations.compliance.xmpp.tests;
 
 import im.conversations.compliance.annotations.ComplianceTest;
 import im.conversations.compliance.xmpp.extensions.extservices.Service;
-import rocks.xmpp.core.session.XmppClient;
-
 import java.util.Arrays;
 import java.util.List;
+import rocks.xmpp.core.session.XmppClient;
 
 @ComplianceTest(
         short_name = "stun",
         full_name = "XEP-0215: External Service Discovery (STUN)",
         url = "https://xmpp.org/extensions/xep-0215.html",
-        description = "Checks if the server provides a STUN server"
-)
+        description = "Checks if the server provides a STUN server")
 public class StunExternalServiceTest extends AbstractExternalServiceTest {
     public StunExternalServiceTest(XmppClient client) {
         super(client);
@@ -28,7 +26,8 @@ public class StunExternalServiceTest extends AbstractExternalServiceTest {
                 continue;
             }
 
-            if (Arrays.asList("tcp", "udp").contains(service.getTransport()) && Arrays.asList("stun","stuns").contains(service.getType())) {
+            if (Arrays.asList("tcp", "udp").contains(service.getTransport())
+                    && Arrays.asList("stun", "stuns").contains(service.getType())) {
                 return true;
             }
         }

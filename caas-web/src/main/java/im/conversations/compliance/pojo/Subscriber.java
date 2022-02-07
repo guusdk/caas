@@ -33,9 +33,11 @@ public class Subscriber {
 
     @Override
     public boolean equals(Object o) {
-        if(o instanceof Subscriber) {
+        if (o instanceof Subscriber) {
             Subscriber s = (Subscriber) o;
-            return s.domain.equals(domain) && s.email.equals(email) && s.unsubscribeCode.equals(unsubscribeCode);
+            return s.domain.equals(domain)
+                    && s.email.equals(email)
+                    && s.unsubscribeCode.equals(unsubscribeCode);
         }
         return false;
     }

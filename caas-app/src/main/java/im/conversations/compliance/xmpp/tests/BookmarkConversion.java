@@ -1,17 +1,15 @@
 package im.conversations.compliance.xmpp.tests;
 
 import im.conversations.compliance.annotations.ComplianceTest;
-import rocks.xmpp.core.session.XmppClient;
-
 import java.util.Collections;
 import java.util.List;
+import rocks.xmpp.core.session.XmppClient;
 
 @ComplianceTest(
         short_name = "xep0411",
         full_name = "XEP-0411: Bookmarks Conversion",
         url = "https://xmpp.org/extensions/xep-0411.html",
-        description = "Converts between private-xml and PEP based bookmarks"
-)
+        description = "Converts between private-xml and PEP based bookmarks")
 public class BookmarkConversion extends AbstractDiscoTest {
 
     public BookmarkConversion(XmppClient client) {

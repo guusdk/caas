@@ -1,10 +1,16 @@
 package im.conversations.compliance.xmpp.tests;
 
+import static im.conversations.compliance.xmpp.utils.HttpUtils.shutdown;
+
 import im.conversations.compliance.annotations.ComplianceTest;
 import im.conversations.compliance.xmpp.extensions.upload.Request;
 import im.conversations.compliance.xmpp.extensions.upload.Slot;
 import im.conversations.compliance.xmpp.extensions.upload.Upload;
-import okhttp3.Cache;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import okhttp3.OkHttpClient;
 import okhttp3.Response;
 import org.slf4j.Logger;
@@ -15,25 +21,22 @@ import rocks.xmpp.core.stanza.model.IQ;
 import rocks.xmpp.extensions.disco.ServiceDiscoveryManager;
 import rocks.xmpp.extensions.disco.model.items.Item;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
-
-import static im.conversations.compliance.xmpp.utils.HttpUtils.shutdown;
-
 @ComplianceTest(
         short_name = "xep0363_cors",
         full_name = "XEP-0363: HTTP File Upload (CORS Headers)",
         url = "https://xmpp.org/extensions/xep-0363.html",
-        description = "Provides a protocol for transferring files between entities by uploading the file to an HTTP server.",
-        informational = true
-)
+        description =
+                "Provides a protocol for transferring files between entities by uploading the file"
+                        + " to an HTTP server.",
+        informational = true)
 public class HttpUploadCors extends AbstractTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HttpUploadCors.class);
-    private static final List<String> REQUIRED_CORS_HEADERS = Arrays.asList("Access-Control-Allow-Origin", "Access-Control-Allow-Methods", "Access-Control-Allow-Headers");
+    private static final List<String> REQUIRED_CORS_HEADERS =
+            Arrays.asList(
+                    "Access-Control-Allow-Origin",
+                    "Access-Control-Allow-Methods",
+                    "Access-Control-Allow-Headers");
     private Request DUMMY_SLOT_REQUEST = new Request("hello.png", 1234, "image/png");
 
     public HttpUploadCors(XmppClient client) {
@@ -52,7 +55,10 @@ public class HttpUploadCors extends AbstractTest {
                 jid = items.get(0).getJid();
             } else {
                 Jid domain = client.getDomain();
-                if (manager.discoverInformation(client.getDomain()).get().getFeatures().contains(Upload.NAMESPACE)) {
+                if (manager.discoverInformation(client.getDomain())
+                        .get()
+                        .getFeatures()
+                        .contains(Upload.NAMESPACE)) {
                     jid = domain;
                 } else {
                     LOGGER.debug("No HTTP upload service found");
@@ -73,15 +79,16 @@ public class HttpUploadCors extends AbstractTest {
 
     private static boolean checkCorsHeaders(URL url) throws IOException {
 
-        LOGGER.debug("checking CORS Header on "+url.toString());
+        LOGGER.debug("checking CORS Header on " + url.toString());
 
-        okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(url)
-                .addHeader("Origin", "https://compliance.conversations.im")
-                .addHeader("Access-Control-Request-Method", "PUT")
-                .addHeader("Access-Control-Request-Headers", "content-type")
-                .method("OPTIONS", null)
-                .build();
+        okhttp3.Request request =
+                new okhttp3.Request.Builder()
+                        .url(url)
+                        .addHeader("Origin", "https://compliance.conversations.im")
+                        .addHeader("Access-Control-Request-Method", "PUT")
+                        .addHeader("Access-Control-Request-Headers", "content-type")
+                        .method("OPTIONS", null)
+                        .build();
 
         OkHttpClient client = new OkHttpClient();
 

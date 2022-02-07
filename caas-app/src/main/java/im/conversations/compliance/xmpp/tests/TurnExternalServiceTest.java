@@ -2,20 +2,18 @@ package im.conversations.compliance.xmpp.tests;
 
 import im.conversations.compliance.annotations.ComplianceTest;
 import im.conversations.compliance.xmpp.extensions.extservices.Service;
+import java.util.Arrays;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.util.Strings;
 
-import java.util.Arrays;
-import java.util.List;
-
 @ComplianceTest(
         short_name = "turn",
         full_name = "XEP-0215: External Service Discovery (TURN)",
         url = "https://xmpp.org/extensions/xep-0215.html",
-        description = "Checks if the server provides a TURN server"
-)
+        description = "Checks if the server provides a TURN server")
 public class TurnExternalServiceTest extends AbstractExternalServiceTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TurnExternalServiceTest.class);
@@ -37,9 +35,13 @@ public class TurnExternalServiceTest extends AbstractExternalServiceTest {
                 continue;
             }
 
-            if (Arrays.asList("tcp", "udp").contains(service.getTransport()) && Arrays.asList("turn","turns").contains(service.getType())) {
+            if (Arrays.asList("tcp", "udp").contains(service.getTransport())
+                    && Arrays.asList("turn", "turns").contains(service.getType())) {
                 if (Strings.isNullOrEmpty(username) || Strings.isNullOrEmpty(password)) {
-                    LOGGER.debug("{}/{} server without username and password are invalid in webrtc", service.getType(), service.getTransport());
+                    LOGGER.debug(
+                            "{}/{} server without username and password are invalid in webrtc",
+                            service.getType(),
+                            service.getTransport());
                     continue;
                 }
                 return true;
@@ -47,5 +49,4 @@ public class TurnExternalServiceTest extends AbstractExternalServiceTest {
         }
         return false;
     }
-
 }

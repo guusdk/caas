@@ -4,23 +4,17 @@ import javax.xml.bind.annotation.XmlAttribute;
 
 public class Service {
 
-    @XmlAttribute
-    private String host;
+    @XmlAttribute private String host;
 
-    @XmlAttribute
-    private int port;
+    @XmlAttribute private int port;
 
-    @XmlAttribute
-    private String transport;
+    @XmlAttribute private String transport;
 
-    @XmlAttribute
-    private String type;
+    @XmlAttribute private String type;
 
-    @XmlAttribute
-    private String username;
+    @XmlAttribute private String username;
 
-    @XmlAttribute
-    private String password;
+    @XmlAttribute private String password;
 
     public String getUsername() {
         return username;

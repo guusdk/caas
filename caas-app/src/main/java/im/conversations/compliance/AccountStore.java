@@ -1,9 +1,8 @@
 package im.conversations.compliance;
 
-import rocks.xmpp.addr.Jid;
-
 import java.io.*;
 import java.util.Properties;
+import rocks.xmpp.addr.Jid;
 
 public class AccountStore {
 
@@ -30,16 +29,15 @@ public class AccountStore {
                 //
             }
         } catch (IOException e) {
-            //ignored
+            // ignored
         }
-        properties.put(jid.asBareJid().toString(),password);
+        properties.put(jid.asBareJid().toString(), password);
         try {
-            properties.storeToXML(new FileOutputStream(FILE),null);
+            properties.storeToXML(new FileOutputStream(FILE), null);
             return true;
         } catch (IOException e) {
             e.printStackTrace();
             return false;
         }
     }
-
 }

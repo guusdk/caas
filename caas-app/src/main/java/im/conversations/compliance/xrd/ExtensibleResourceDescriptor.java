@@ -1,11 +1,11 @@
 package im.conversations.compliance.xrd;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "XRD")
 public class ExtensibleResourceDescriptor {
@@ -21,7 +21,9 @@ public class ExtensibleResourceDescriptor {
     }
 
     public List<Link> getLinks(List<String> rels) {
-        return getLinks().stream().filter(l -> rels.stream().anyMatch(r -> r.equals(l.getRel()))).collect(Collectors.toList());
+        return getLinks().stream()
+                .filter(l -> rels.stream().anyMatch(r -> r.equals(l.getRel())))
+                .collect(Collectors.toList());
     }
 
     private List<Link> getLinks() {

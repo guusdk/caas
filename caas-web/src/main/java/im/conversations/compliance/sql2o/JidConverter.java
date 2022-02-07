@@ -1,6 +1,5 @@
 package im.conversations.compliance.sql2o;
 
-
 import org.sql2o.converters.Converter;
 import org.sql2o.converters.ConverterException;
 import rocks.xmpp.addr.Jid;
@@ -18,7 +17,8 @@ public class JidConverter implements Converter<Jid> {
                 throw new ConverterException("Unable to convert " + o.toString(), e);
             }
         } else {
-            throw new ConverterException("can not convert object of type " + o.getClass().getName() + " to Jid");
+            throw new ConverterException(
+                    "can not convert object of type " + o.getClass().getName() + " to Jid");
         }
     }
 

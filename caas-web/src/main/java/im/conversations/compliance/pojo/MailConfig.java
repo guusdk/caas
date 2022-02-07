@@ -8,7 +8,8 @@ public class MailConfig {
     private String username = null;
     private String password = null;
 
-    public MailConfig(String host, int port, String from, boolean ssl, String username, String password) {
+    public MailConfig(
+            String host, int port, String from, boolean ssl, String username, String password) {
         this.host = host;
         this.port = port;
         this.from = from;
@@ -40,5 +41,4 @@ public class MailConfig {
     public String getPassword() {
         return password;
     }
-
 }

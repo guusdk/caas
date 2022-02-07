@@ -4,15 +4,14 @@ import im.conversations.compliance.persistence.DBOperations;
 import im.conversations.compliance.pojo.Credential;
 import im.conversations.compliance.pojo.Result;
 import im.conversations.compliance.utils.ExceptionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OneOffTestRunner {
     private static final Logger LOGGER = LoggerFactory.getLogger(OneOffTestRunner.class);
@@ -28,11 +27,11 @@ public class OneOffTestRunner {
     }
 
     public static boolean runOneOffTestsFor(String domain) {
-        Credential credential = DBOperations.getCredentials()
-                .stream()
-                .filter(it -> it.getDomain().equals(domain))
-                .findFirst()
-                .orElse(null);
+        Credential credential =
+                DBOperations.getCredentials().stream()
+                        .filter(it -> it.getDomain().equals(domain))
+                        .findFirst()
+                        .orElse(null);
         if (credential == null) {
             return false;
         }
@@ -76,12 +75,13 @@ public class OneOffTestRunner {
     private static void startTests(Credential credential) {
         List<Result> results;
         try {
-            results = TestExecutor.executeTestsFor(credential, (client) -> ServerMetadataChecker.updateServerMetadataFor(client, credential));
-            DBOperations.addCurrentResults(
-                    credential.getDomain(),
-                    results,
-                    Instant.now()
-            );
+            results =
+                    TestExecutor.executeTestsFor(
+                            credential,
+                            (client) ->
+                                    ServerMetadataChecker.updateServerMetadataFor(
+                                            client, credential));
+            DBOperations.addCurrentResults(credential.getDomain(), results, Instant.now());
             synchronized (testRunningFor) {
                 testRunningFor.get(credential.getDomain()).forEach(it -> it.onResult(true, "OK"));
                 testRunningFor.remove(credential.getDomain());
@@ -100,5 +100,4 @@ public class OneOffTestRunner {
     public interface ResultListener {
         void onResult(boolean success, String msg);
     }
-
 }

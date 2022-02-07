@@ -5,7 +5,8 @@ import rocks.xmpp.core.session.XmppClient;
 
 public class TestFactory {
 
-    public static AbstractTest create(Class<? extends AbstractTest> clazz, XmppClient client) throws TestCreationException {
+    public static AbstractTest create(Class<? extends AbstractTest> clazz, XmppClient client)
+            throws TestCreationException {
         if (client == null) {
             throw new TestCreationException();
         }
@@ -17,7 +18,5 @@ public class TestFactory {
         }
     }
 
-    public static class TestCreationException extends Exception {
-
-    }
+    public static class TestCreationException extends Exception {}
 }

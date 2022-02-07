@@ -5,48 +5,51 @@ import im.conversations.compliance.annotations.ComplianceTest;
 import im.conversations.compliance.xmpp.utils.HttpUtils;
 import im.conversations.compliance.xrd.ExtensibleResourceDescriptor;
 import im.conversations.compliance.xrd.Link;
-import okhttp3.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import rocks.xmpp.core.session.XmppClient;
-
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.Unmarshaller;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.Unmarshaller;
+import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import rocks.xmpp.core.session.XmppClient;
 
 @ComplianceTest(
         short_name = "xep0156",
         informational = true,
         full_name = "XEP-0156: Discovering Alternative XMPP Connection Methods (HTTP)",
         url = "https://xmpp.org/extensions/xep-0156.html",
-        description = "Allows web clients to discover connections methods"
-)
+        description = "Allows web clients to discover connections methods")
 public class AlternateConnections extends AbstractTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AlternateConnections.class);
 
     private static final GsonBuilder GSON_BUILDER = new GsonBuilder();
-    private static final List<String> rels = Arrays.asList("urn:xmpp:alt-connections:xbosh", "urn:xmpp:alt-connections:websocket");
-
+    private static final List<String> rels =
+            Arrays.asList("urn:xmpp:alt-connections:xbosh", "urn:xmpp:alt-connections:websocket");
 
     public AlternateConnections(XmppClient client) {
         super(client);
     }
 
     private static boolean testAltConnectionsFromXml(InputStream is) throws Throwable {
-        final JAXBContext jaxbContext = JAXBContext.newInstance(ExtensibleResourceDescriptor.class, Link.class);
+        final JAXBContext jaxbContext =
+                JAXBContext.newInstance(ExtensibleResourceDescriptor.class, Link.class);
         final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-        final ExtensibleResourceDescriptor xdr = (ExtensibleResourceDescriptor) unmarshaller.unmarshal(is);
+        final ExtensibleResourceDescriptor xdr =
+                (ExtensibleResourceDescriptor) unmarshaller.unmarshal(is);
         final List<Link> links = xdr.getLinks(rels);
         return checkConnections(links);
     }
 
     private static boolean testAltConnectionsFromJson(InputStream is) {
-        final ExtensibleResourceDescriptor xdr = GSON_BUILDER.create().fromJson(new InputStreamReader(is), ExtensibleResourceDescriptor.class);
+        final ExtensibleResourceDescriptor xdr =
+                GSON_BUILDER
+                        .create()
+                        .fromJson(new InputStreamReader(is), ExtensibleResourceDescriptor.class);
         final List<Link> links = xdr.getLinks(rels);
         return checkConnections(links);
     }
@@ -82,10 +85,16 @@ public class AlternateConnections extends AbstractTest {
                 url = String.format("http://%s:%d%s", uri.getHost(), port, uri.getPath());
                 break;
             default:
-                url = String.format("%s://%s:%d%s", uri.getScheme(), uri.getHost(), port, uri.getPath());
+                url =
+                        String.format(
+                                "%s://%s:%d%s",
+                                uri.getScheme(), uri.getHost(), port, uri.getPath());
                 break;
         }
-        final OkHttpClient okHttpClient = new OkHttpClient.Builder().protocols(Collections.singletonList(Protocol.HTTP_1_1)).build();
+        final OkHttpClient okHttpClient =
+                new OkHttpClient.Builder()
+                        .protocols(Collections.singletonList(Protocol.HTTP_1_1))
+                        .build();
         final boolean ws = Arrays.asList("ws", "wss").contains(uri.getScheme());
         if (ws) {
             LOGGER.debug(String.format("checking reachability of %s", url));
@@ -114,14 +123,21 @@ public class AlternateConnections extends AbstractTest {
                 if (response.code() <= 299) {
                     return true;
                 }
-                LOGGER.debug(String.format("check of %s returned invalid response code (%d)", url, response.code()));
+                LOGGER.debug(
+                        String.format(
+                                "check of %s returned invalid response code (%d)",
+                                url, response.code()));
                 return false;
             } else {
-                final boolean corsHeaders = containsIgnoreCase(headers, "Access-Control-Allow-Origin", "*");
+                final boolean corsHeaders =
+                        containsIgnoreCase(headers, "Access-Control-Allow-Origin", "*");
                 if (response.code() <= 299 && corsHeaders) {
                     return true;
                 }
-                LOGGER.debug(String.format("check of %s failed. response code=%d, CORS=%b", url, response.code(), corsHeaders));
+                LOGGER.debug(
+                        String.format(
+                                "check of %s failed. response code=%d, CORS=%b",
+                                url, response.code(), corsHeaders));
                 return false;
             }
         } catch (Throwable t) {
@@ -139,7 +155,10 @@ public class AlternateConnections extends AbstractTest {
         }
     }
 
-    private static boolean containsIgnoreCase(final Map<String, List<String>> headers, final String needle, final String expectedValue) {
+    private static boolean containsIgnoreCase(
+            final Map<String, List<String>> headers,
+            final String needle,
+            final String expectedValue) {
         for (Map.Entry<String, List<String>> header : headers.entrySet()) {
             if (header.getKey().equalsIgnoreCase(needle)) {
                 return header.getValue().contains(expectedValue);
@@ -155,10 +174,15 @@ public class AlternateConnections extends AbstractTest {
                 || discoverAndTestAltConnections(domain, true, false);
     }
 
-    private boolean discoverAndTestAltConnections(final String domain, final boolean json, final boolean https) {
+    private boolean discoverAndTestAltConnections(
+            final String domain, final boolean json, final boolean https) {
         final OkHttpClient okHttpClient = new OkHttpClient();
         try {
-            final URL url = new URL(https ? "https" : "http", domain, "/.well-known/host-meta" + (json ? ".json" : ""));
+            final URL url =
+                    new URL(
+                            https ? "https" : "http",
+                            domain,
+                            "/.well-known/host-meta" + (json ? ".json" : ""));
             LOGGER.debug(String.format("checking on %s ", url.toString()));
             final Request request = new Request.Builder().url(url).build();
             final Response response = okHttpClient.newCall(request).execute();

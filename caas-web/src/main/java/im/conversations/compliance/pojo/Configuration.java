@@ -1,11 +1,10 @@
 package im.conversations.compliance.pojo;
 
 import im.conversations.compliance.utils.JsonReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Configuration {
 
@@ -18,25 +17,24 @@ public class Configuration {
     private int port = 4567;
     private int testRunInterval = 24 * 60;
     private int dbConnections = 1;
-    //Required only if you want to send mails, and have a valid mail config
+    // Required only if you want to send mails, and have a valid mail config
     private String rootUrl;
     private MailConfig mailConfig;
     private String dbUrl = "jdbc:sqlite:data.db";
     private String dbUsername;
     private String dbPassword;
 
-    private Configuration() {
+    private Configuration() {}
 
-    }
-
-    public synchronized static void setFilename(String filename) {
+    public static synchronized void setFilename(String filename) {
         if (INSTANCE != null) {
-            throw new IllegalStateException("Unable to set filename after instance has been created");
+            throw new IllegalStateException(
+                    "Unable to set filename after instance has been created");
         }
         Configuration.FILE = new File(filename);
     }
 
-    public synchronized static Configuration getInstance() {
+    public static synchronized Configuration getInstance() {
         if (INSTANCE == null) {
             if (FILE.exists()) {
                 INSTANCE = new JsonReader<>(Configuration.class).read(FILE);

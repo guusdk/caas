@@ -9,10 +9,6 @@ import im.conversations.compliance.email.MailSender;
 import im.conversations.compliance.persistence.DBOperations;
 import im.conversations.compliance.pojo.*;
 import im.conversations.compliance.web.WebUtils;
-import org.simplejavamail.email.Email;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
@@ -22,12 +18,17 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import org.simplejavamail.api.email.Email;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PeriodicTestRunner implements Runnable {
     private static final Logger LOGGER = LoggerFactory.getLogger(PeriodicTestRunner.class);
-    private final static ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR = new ScheduledThreadPoolExecutor(1);
+    private static final ScheduledThreadPoolExecutor SCHEDULED_THREAD_POOL_EXECUTOR =
+            new ScheduledThreadPoolExecutor(1);
     private static final PeriodicTestRunner INSTANCE = new PeriodicTestRunner();
-    private final static ExecutorService THREAD_POOL_EXECUTOR_SERVICE = Executors.newFixedThreadPool(24);
+    private static final ExecutorService THREAD_POOL_EXECUTOR_SERVICE =
+            Executors.newFixedThreadPool(24);
 
     private PeriodicTestRunner() {
         final var interval = Configuration.getInstance().getTestRunInterval();
@@ -41,13 +42,13 @@ public class PeriodicTestRunner implements Runnable {
             LOGGER.info("Next test scheduled " + minutesLeft + " minutes from now");
         }
         // Run on start
-        SCHEDULED_THREAD_POOL_EXECUTOR.scheduleAtFixedRate(this, minutesLeft, interval, TimeUnit.MINUTES);
+        SCHEDULED_THREAD_POOL_EXECUTOR.scheduleAtFixedRate(
+                this, minutesLeft, interval, TimeUnit.MINUTES);
     }
 
     public static PeriodicTestRunner getInstance() {
         return INSTANCE;
     }
-
 
     @Override
     public void run() {
@@ -67,18 +68,25 @@ public class PeriodicTestRunner implements Runnable {
             iterationNumber = iteration.getIterationNumber();
         }
         Instant beginTime = Instant.now();
-        LOGGER.info("Started running periodic tests #" + (iterationNumber + 1) + " at " + beginTime);
+        LOGGER.info(
+                "Started running periodic tests #" + (iterationNumber + 1) + " at " + beginTime);
 
-        List<ListenableFuture<ResultDomainPair>> futures = Lists.transform(credentials, c -> Futures.submit(() -> performTest(c), THREAD_POOL_EXECUTOR_SERVICE));
+        List<ListenableFuture<ResultDomainPair>> futures =
+                Lists.transform(
+                        credentials,
+                        c -> Futures.submit(() -> performTest(c), THREAD_POOL_EXECUTOR_SERVICE));
         final List<ResultDomainPair> results;
         try {
-            results = Futures.allAsList(futures).get().stream().filter(Objects::nonNull).collect(Collectors.toList());
+            results =
+                    Futures.allAsList(futures).get().stream()
+                            .filter(Objects::nonNull)
+                            .collect(Collectors.toList());
         } catch (Exception e) {
             LOGGER.error("Unable to execute tests", Throwables.getRootCause(e));
             return;
         }
         Instant endTime = Instant.now();
-        //Add results to database
+        // Add results to database
         DBOperations.addPeriodicResults(results, beginTime, endTime);
         LOGGER.info("Attempted {} tests. Got {} results", credentials.size(), results.size());
         LOGGER.info("Ended running periodic tests #" + (iterationNumber + 1) + " at " + endTime);
@@ -87,23 +95,28 @@ public class PeriodicTestRunner implements Runnable {
 
     private static ResultDomainPair performTest(Credential credential) {
         try {
-            final List<Result> result = TestExecutor.executeTestsFor(
-                    credential,
-                    (client) -> ServerMetadataChecker.updateServerMetadataFor(client, credential)
-            );
+            final List<Result> result =
+                    TestExecutor.executeTestsFor(
+                            credential,
+                            (client) ->
+                                    ServerMetadataChecker.updateServerMetadataFor(
+                                            client, credential));
             LOGGER.info("Completed test for {}", credential.getDomain());
             DBOperations.setSuccess(credential);
             return new ResultDomainPair(credential.getDomain(), result);
         } catch (final Exception e) {
             final Class<? extends Exception> clazz = e.getClass();
-            LOGGER.warn("Unable to perform test for {} - {}", credential.getDomain(), clazz.getSimpleName());
+            LOGGER.warn(
+                    "Unable to perform test for {} - {}",
+                    credential.getDomain(),
+                    clazz.getSimpleName());
             DBOperations.setFailure(credential, clazz.getSimpleName());
             return null;
         }
     }
 
     private void postTestsRun() {
-        //Remove invalid credential
+        // Remove invalid credential
         final int deleted = DBOperations.deleteFailedCredentials();
         LOGGER.info("Deleted {} failing credentials", deleted);
         if (Configuration.getInstance().getMailConfig() != null) {
@@ -123,29 +136,33 @@ public class PeriodicTestRunner implements Runnable {
             int oldIteration = newIteration - 1;
             List<Result> newResults = DBOperations.getHistoricalResultsFor(domain, newIteration);
             List<Result> oldResults = DBOperations.getHistoricalResultsFor(domain, oldIteration);
-            //If results are unavailable due to error, notify subscribers
+            // If results are unavailable due to error, notify subscribers
             if (newResults.isEmpty()) {
-                List<Email> mails = MailBuilder.getInstance().buildResultsNotAvailableMails(domain, iteration);
+                List<Email> mails =
+                        MailBuilder.getInstance().buildResultsNotAvailableMails(domain, iteration);
                 if (!mails.isEmpty()) {
                     LOGGER.info(
                             "Sending email to subscribers of "
                                     + domain
-                                    + " notifying about error while getting compliance results"
-                    );
+                                    + " notifying about error while getting compliance results");
                     MailSender.sendMails(mails);
                     LOGGER.info(
                             "Sent email to subscribers of "
                                     + domain
-                                    + " notifying about error while getting compliance results"
-                    );
+                                    + " notifying about error while getting compliance results");
                 }
             }
             HistoricalSnapshot.Change change = new HistoricalSnapshot.Change();
             for (Result result : newResults) {
-                Result oldResult = oldResults.stream()
-                        .filter(it -> it.getTest().short_name().equals(result.getTest().short_name()))
-                        .findFirst()
-                        .orElse(null);
+                Result oldResult =
+                        oldResults.stream()
+                                .filter(
+                                        it ->
+                                                it.getTest()
+                                                        .short_name()
+                                                        .equals(result.getTest().short_name()))
+                                .findFirst()
+                                .orElse(null);
                 if (oldResult == null || oldResult.isSuccess() != result.isSuccess()) {
                     if (result.isSuccess()) {
                         change.getPass().add(result.getTest().short_name());
@@ -155,19 +172,18 @@ public class PeriodicTestRunner implements Runnable {
                 }
             }
             if (!change.getFail().isEmpty() || !change.getPass().isEmpty()) {
-                List<Email> mails = MailBuilder.getInstance().buildChangeEmails(change, iteration, domain);
+                List<Email> mails =
+                        MailBuilder.getInstance().buildChangeEmails(change, iteration, domain);
                 if (!mails.isEmpty()) {
                     LOGGER.info(
                             "Sending email to subscribers of "
                                     + domain
-                                    + " notifying about changes in its compliance result"
-                    );
+                                    + " notifying about changes in its compliance result");
                     MailSender.sendMails(mails);
                     LOGGER.info(
                             "Sent email to subscribers of "
                                     + domain
-                                    + " notifying about changes in its compliance result"
-                    );
+                                    + " notifying about changes in its compliance result");
                 }
             }
         }

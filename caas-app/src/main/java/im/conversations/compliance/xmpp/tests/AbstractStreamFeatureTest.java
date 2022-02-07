@@ -1,10 +1,9 @@
 package im.conversations.compliance.xmpp.tests;
 
+import java.util.Map;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.core.stream.client.StreamFeaturesManager;
 import rocks.xmpp.core.stream.model.StreamFeature;
-
-import java.util.Map;
 
 public abstract class AbstractStreamFeatureTest extends AbstractTest {
 
@@ -14,7 +13,8 @@ public abstract class AbstractStreamFeatureTest extends AbstractTest {
 
     @Override
     public boolean run() {
-        Map<Class<? extends StreamFeature>, StreamFeature> features = client.getManager(StreamFeaturesManager.class).getFeatures();
+        Map<Class<? extends StreamFeature>, StreamFeature> features =
+                client.getManager(StreamFeaturesManager.class).getFeatures();
         return features.containsKey(getStreamFeature());
     }
 

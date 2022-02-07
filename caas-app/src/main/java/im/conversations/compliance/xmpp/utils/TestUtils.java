@@ -2,7 +2,6 @@ package im.conversations.compliance.xmpp.utils;
 
 import im.conversations.compliance.annotations.ComplianceTest;
 import im.conversations.compliance.xmpp.Tests;
-
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -10,49 +9,42 @@ import java.util.stream.Collectors;
 public class TestUtils {
     private static List<ComplianceTest> allComplianceTests =
             Collections.unmodifiableList(
-                    Tests.getTests()
-                            .stream()
+                    Tests.getTests().stream()
                             .map(it -> it.getAnnotation(ComplianceTest.class))
                             .sorted(Comparator.comparing(ComplianceTest::short_name))
                             .collect(Collectors.toList()));
 
     private static List<ComplianceTest> informationalTests =
             Collections.unmodifiableList(
-                    allComplianceTests
-                            .stream()
+                    allComplianceTests.stream()
                             .filter(ComplianceTest::informational)
-                            .collect(Collectors.toList())
-            );
+                            .collect(Collectors.toList()));
 
     private static List<ComplianceTest> complianceTests =
             Collections.unmodifiableList(
-                    allComplianceTests
-                            .stream()
+                    allComplianceTests.stream()
                             .filter(it -> !it.informational())
-                            .collect(Collectors.toList())
-            );
+                            .collect(Collectors.toList()));
 
     private static List<String> allComplianceTestNames =
             Collections.unmodifiableList(
-                    allComplianceTests
-                            .stream()
+                    allComplianceTests.stream()
                             .map(ComplianceTest::short_name)
                             .collect(Collectors.toList()));
 
     private static List<String> complianceTestNames =
             Collections.unmodifiableList(
-                    allComplianceTests
-                            .stream()
+                    allComplianceTests.stream()
                             .filter(it -> !it.informational())
                             .map(ComplianceTest::short_name)
                             .collect(Collectors.toList()));
 
     private static Map<String, ComplianceTest> complianceTestMap =
             Collections.unmodifiableMap(
-                    allComplianceTests
-                            .stream()
-                            .collect(Collectors.toMap(ComplianceTest::short_name, Function.identity()))
-            );
+                    allComplianceTests.stream()
+                            .collect(
+                                    Collectors.toMap(
+                                            ComplianceTest::short_name, Function.identity())));
 
     /**
      * Get short names of tests which aren't informational in nature

@@ -7,8 +7,9 @@ import rocks.xmpp.core.session.XmppClient;
         short_name = "xep0363",
         full_name = "XEP-0363: HTTP File Upload",
         url = "https://xmpp.org/extensions/xep-0363.html",
-        description = "Provides a protocol for transferring files between entities by uploading the file to an HTTP server."
-)
+        description =
+                "Provides a protocol for transferring files between entities by uploading the file"
+                        + " to an HTTP server.")
 public class HttpUpload extends AbstractServiceTest {
 
     public HttpUpload(XmppClient client) {

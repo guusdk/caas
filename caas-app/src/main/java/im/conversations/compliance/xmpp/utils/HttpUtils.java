@@ -1,9 +1,8 @@
 package im.conversations.compliance.xmpp.utils;
 
+import java.io.IOException;
 import okhttp3.Cache;
 import okhttp3.OkHttpClient;
-
-import java.io.IOException;
 
 public class HttpUtils {
 
@@ -23,5 +22,4 @@ public class HttpUtils {
             return;
         }
     }
-
 }

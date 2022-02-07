@@ -1,13 +1,10 @@
 package im.conversations.compliance.sql2o;
 
-import org.sql2o.converters.Converter;
-import org.sql2o.converters.ConverterException;
-
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.time.format.DateTimeParseException;
+import org.sql2o.converters.Converter;
+import org.sql2o.converters.ConverterException;
 
 public class InstantConverter implements Converter<Instant> {
     @Override
@@ -23,7 +20,8 @@ public class InstantConverter implements Converter<Instant> {
                 throw new ConverterException(e.getMessage());
             }
         }
-        throw new ConverterException("can not convert object of type " + o.getClass().getName() + " to Instant");
+        throw new ConverterException(
+                "can not convert object of type " + o.getClass().getName() + " to Instant");
     }
 
     @Override

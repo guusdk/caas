@@ -10,7 +10,8 @@ public class HistoricalSnapshot {
     private int total;
     private Change change;
 
-    public HistoricalSnapshot(int iteration, String timestamp, int passed, int total, Change change) {
+    public HistoricalSnapshot(
+            int iteration, String timestamp, int passed, int total, Change change) {
         this.iteration = iteration;
         this.timestamp = timestamp;
         this.passed = passed;
@@ -42,11 +43,12 @@ public class HistoricalSnapshot {
     public boolean equals(Object o) {
         if (o instanceof HistoricalSnapshot) {
             HistoricalSnapshot hs = (HistoricalSnapshot) o;
-            boolean value = hs.iteration == iteration &&
-                    hs.timestamp.equals(timestamp) &&
-                    hs.change.equals(change) &&
-                    hs.total == total &&
-                    hs.passed == passed;
+            boolean value =
+                    hs.iteration == iteration
+                            && hs.timestamp.equals(timestamp)
+                            && hs.change.equals(change)
+                            && hs.total == total
+                            && hs.passed == passed;
             return value;
         }
         return false;

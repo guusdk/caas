@@ -1,16 +1,15 @@
 package im.conversations.compliance.web;
 
+import static im.conversations.compliance.utils.JsonReader.gson;
+
 import im.conversations.compliance.pojo.ServerResponse;
 import im.conversations.compliance.xmpp.OneOffTestRunner;
+import java.io.IOException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-
-import java.io.IOException;
-
-import static im.conversations.compliance.utils.JsonReader.gson;
 
 @WebSocket
 public class TestLiveWebsocket {
@@ -22,22 +21,24 @@ public class TestLiveWebsocket {
         if (!OneOffTestRunner.isTestRunningFor(domain)) {
             OneOffTestRunner.runOneOffTestsFor(domain);
         }
-        boolean status = OneOffTestRunner.addResultListener(domain, (success, msg) -> {
-            try {
-                ServerResponse liveResultResponse = new ServerResponse(
-                        success,
-                        msg,
-                        "/server/" + domain);
-                message(session, gson.toJson(liveResultResponse));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        boolean status =
+                OneOffTestRunner.addResultListener(
+                        domain,
+                        (success, msg) -> {
+                            try {
+                                ServerResponse liveResultResponse =
+                                        new ServerResponse(success, msg, "/server/" + domain);
+                                message(session, gson.toJson(liveResultResponse));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
         if (!status) {
-            ServerResponse liveResultResponse = new ServerResponse(
-                    false,
-                    "No live tests running for " + domain + ". Try refreshing this page",
-                    null);
+            ServerResponse liveResultResponse =
+                    new ServerResponse(
+                            false,
+                            "No live tests running for " + domain + ". Try refreshing this page",
+                            null);
             try {
                 message(session, gson.toJson(liveResultResponse));
             } catch (Exception e) {
@@ -48,8 +49,7 @@ public class TestLiveWebsocket {
     }
 
     @OnWebSocketClose
-    public void closed(Session session, int statusCode, String reason) {
-    }
+    public void closed(Session session, int statusCode, String reason) {}
 
     @OnWebSocketMessage
     public void message(Session session, String message) throws IOException {

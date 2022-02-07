@@ -1,5 +1,13 @@
 package im.conversations.compliance.xmpp;
 
+import java.io.IOException;
+import java.security.cert.Certificate;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLSession;
 import org.bouncycastle.asn1.*;
 import org.bouncycastle.asn1.x500.RDN;
 import org.bouncycastle.asn1.x500.X500Name;
@@ -7,19 +15,10 @@ import org.bouncycastle.asn1.x500.style.BCStyle;
 import org.bouncycastle.asn1.x500.style.IETFUtils;
 import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
 
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.SSLSession;
-import java.io.IOException;
-import java.security.cert.Certificate;
-import java.security.cert.X509Certificate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 public class XmppDomainVerifier implements HostnameVerifier {
 
-    private final static String SRVName = "1.3.6.1.5.5.7.8.7";
-    private final static String xmppAddr = "1.3.6.1.5.5.7.8.5";
+    private static final String SRVName = "1.3.6.1.5.5.7.8.7";
+    private static final String xmppAddr = "1.3.6.1.5.5.7.8.5";
     private static XmppDomainVerifier instance = new XmppDomainVerifier();
 
     private static OtherName parseOtherName(byte[] otherName) {
@@ -29,9 +28,11 @@ public class XmppDomainVerifier implements HostnameVerifier {
                 ASN1Primitive inner = ((DERTaggedObject) asn1Primitive).getObject();
                 if (inner instanceof DLSequence) {
                     DLSequence sequence = (DLSequence) inner;
-                    if (sequence.size() >= 2 && sequence.getObjectAt(1) instanceof DERTaggedObject) {
+                    if (sequence.size() >= 2
+                            && sequence.getObjectAt(1) instanceof DERTaggedObject) {
                         String oid = sequence.getObjectAt(0).toString();
-                        ASN1Primitive value = ((DERTaggedObject) sequence.getObjectAt(1)).getObject();
+                        ASN1Primitive value =
+                                ((DERTaggedObject) sequence.getObjectAt(1)).getObject();
                         if (value instanceof DERUTF8String) {
                             return new OtherName(oid, ((DERUTF8String) value).getString());
                         } else if (value instanceof DERIA5String) {
@@ -105,10 +106,14 @@ public class XmppDomainVerifier implements HostnameVerifier {
                 X500Name x500name = new JcaX509CertificateHolder(certificate).getSubject();
                 RDN[] rdns = x500name.getRDNs(BCStyle.CN);
                 for (int i = 0; i < rdns.length; ++i) {
-                    domains.add(IETFUtils.valueToString(x500name.getRDNs(BCStyle.CN)[i].getFirst().getValue()));
+                    domains.add(
+                            IETFUtils.valueToString(
+                                    x500name.getRDNs(BCStyle.CN)[i].getFirst().getValue()));
                 }
             }
-            return xmppAddrs.contains(domain) || srvNames.contains("_xmpp-client." + domain) || matchDomain(domain, domains);
+            return xmppAddrs.contains(domain)
+                    || srvNames.contains("_xmpp-client." + domain)
+                    || matchDomain(domain, domains);
         } catch (Exception e) {
             return false;
         }

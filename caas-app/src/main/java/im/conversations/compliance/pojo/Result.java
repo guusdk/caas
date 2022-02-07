@@ -23,8 +23,8 @@ public class Result {
     public boolean equals(Object object) {
         if (object instanceof Result) {
             Result result = (Result) object;
-            return result.isSuccess() == success &&
-                    result.getTest().short_name().equals(test.short_name());
+            return result.isSuccess() == success
+                    && result.getTest().short_name().equals(test.short_name());
         }
         return false;
     }

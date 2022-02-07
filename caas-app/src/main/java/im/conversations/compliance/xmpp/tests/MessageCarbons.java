@@ -1,18 +1,17 @@
 package im.conversations.compliance.xmpp.tests;
 
 import im.conversations.compliance.annotations.ComplianceTest;
-import rocks.xmpp.core.session.XmppClient;
-
 import java.util.Arrays;
 import java.util.List;
+import rocks.xmpp.core.session.XmppClient;
 
 @ComplianceTest(
         short_name = "xep0280",
         full_name = "XEP-0280: Message Carbons",
         url = "https://xmpp.org/extensions/xep-0280.html",
-        description = "Provides a way for all clients of a user to be engaged in a conversation " +
-                "by carbon-copying outbound messages to all resources."
-)
+        description =
+                "Provides a way for all clients of a user to be engaged in a conversation "
+                        + "by carbon-copying outbound messages to all resources.")
 public class MessageCarbons extends AbstractDiscoTest {
 
     public MessageCarbons(XmppClient client) {

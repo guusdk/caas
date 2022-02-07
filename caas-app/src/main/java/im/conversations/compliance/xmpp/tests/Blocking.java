@@ -1,19 +1,17 @@
 package im.conversations.compliance.xmpp.tests;
 
 import im.conversations.compliance.annotations.ComplianceTest;
-import rocks.xmpp.core.session.XmppClient;
-
 import java.util.Arrays;
 import java.util.List;
+import rocks.xmpp.core.session.XmppClient;
 
 @ComplianceTest(
         short_name = "xep0191",
         full_name = "XEP-0191: Blocking Command",
         url = "https://xmpp.org/extensions/xep-0191.html",
-        description = "Provides an easy to implement method to block communications with selected users."
-)
+        description =
+                "Provides an easy to implement method to block communications with selected users.")
 public class Blocking extends AbstractDiscoTest {
-
 
     public Blocking(XmppClient client) {
         super(client);

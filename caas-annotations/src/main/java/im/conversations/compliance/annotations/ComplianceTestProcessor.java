@@ -1,7 +1,9 @@
 package im.conversations.compliance.annotations;
 
 import com.google.auto.service.AutoService;
-
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Set;
 import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -11,10 +13,6 @@ import javax.lang.model.util.Elements;
 import javax.lang.model.util.Types;
 import javax.tools.Diagnostic;
 import javax.tools.JavaFileObject;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Set;
-
 
 @AutoService(Processor.class)
 @SupportedSourceVersion(SourceVersion.RELEASE_10)
@@ -38,13 +36,15 @@ public class ComplianceTestProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
-        Set<? extends Element> elements = roundEnvironment.getElementsAnnotatedWith(ComplianceTest.class);
+        Set<? extends Element> elements =
+                roundEnvironment.getElementsAnnotatedWith(ComplianceTest.class);
         for (Element e : elements) {
             if (e.getKind() != ElementKind.CLASS) {
-                messager.printMessage(Diagnostic.Kind.ERROR,
-                        "@ComplianceTest can only be applied to a class. " +
-                                e.getSimpleName() +
-                                " is not a class");
+                messager.printMessage(
+                        Diagnostic.Kind.ERROR,
+                        "@ComplianceTest can only be applied to a class. "
+                                + e.getSimpleName()
+                                + " is not a class");
                 return true;
             } else {
                 testClasses.add((TypeElement) e);
@@ -62,8 +62,9 @@ public class ComplianceTestProcessor extends AbstractProcessor {
     }
 
     /**
-     * Generates Tests class in {@link im.conversations.compliance.xmpp} package with a list of test classes, which
-     * can be used to run tests
+     * Generates Tests class in {@link im.conversations.compliance.xmpp} package with a list of test
+     * classes, which can be used to run tests
+     *
      * @throws Exception
      */
     private void writeTestsFile() throws Exception {
@@ -78,11 +79,13 @@ public class ComplianceTestProcessor extends AbstractProcessor {
             out.print("return Arrays.asList(");
             boolean first = true;
             out.println(testClasses.get(0).getQualifiedName().toString() + ".class");
-            testClasses.stream().skip(1).forEach((tc -> out.println("," + tc.getQualifiedName().toString() + ".class")));
+            testClasses.stream()
+                    .skip(1)
+                    .forEach(
+                            (tc -> out.println("," + tc.getQualifiedName().toString() + ".class")));
             out.println(");");
             out.println("}");
             out.println("}");
         }
     }
-
 }

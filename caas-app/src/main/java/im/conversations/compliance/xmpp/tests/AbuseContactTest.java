@@ -1,21 +1,19 @@
 package im.conversations.compliance.xmpp.tests;
 
 import im.conversations.compliance.annotations.ComplianceTest;
+import java.util.List;
 import rocks.xmpp.addr.Jid;
 import rocks.xmpp.core.XmppException;
 import rocks.xmpp.core.session.XmppClient;
 import rocks.xmpp.extensions.data.model.DataForm;
 import rocks.xmpp.extensions.disco.ServiceDiscoveryManager;
 
-import java.util.List;
-
 @ComplianceTest(
         short_name = "abuse-contact",
         full_name = "XEP-0157: Contact Addresses for XMPP Services (Abuse)",
         url = "https://xmpp.org/extensions/xep-0157.html",
         description = "Checks if the server has a contact for reporting spam/abuse.",
-        informational = true
-)
+        informational = true)
 public class AbuseContactTest extends AbstractTest {
     public AbuseContactTest(XmppClient client) {
         super(client);
@@ -24,9 +22,11 @@ public class AbuseContactTest extends AbstractTest {
     @Override
     public boolean run() {
         Jid target = Jid.of(client.getConnectedResource().getDomain());
-        final ServiceDiscoveryManager serviceDiscoveryManager = client.getManager(ServiceDiscoveryManager.class);
+        final ServiceDiscoveryManager serviceDiscoveryManager =
+                client.getManager(ServiceDiscoveryManager.class);
         try {
-            List<DataForm> extensions = serviceDiscoveryManager.discoverInformation(target).getResult().getExtensions();
+            List<DataForm> extensions =
+                    serviceDiscoveryManager.discoverInformation(target).getResult().getExtensions();
             for (DataForm extension : extensions) {
                 final DataForm.Field addr = extension.findField("abuse-addresses");
                 if (addr != null && addr.getValues().size() > 0) {

@@ -9,15 +9,14 @@ import im.conversations.compliance.pojo.Iteration;
 import im.conversations.compliance.pojo.Subscriber;
 import im.conversations.compliance.utils.TimeUtils;
 import im.conversations.compliance.xmpp.utils.TestUtils;
-import org.simplejavamail.email.Email;
-import org.simplejavamail.email.EmailBuilder;
-import spark.template.freemarker.FreeMarkerEngine;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.simplejavamail.api.email.Email;
+import org.simplejavamail.email.EmailBuilder;
+import spark.template.freemarker.FreeMarkerEngine;
 
 public class MailBuilder {
     private static Configuration configuration;
@@ -48,14 +47,16 @@ public class MailBuilder {
         return INSTANCE;
     }
 
-    private static Email buildEmail(String from, String to, String subject, String html, String plainText) {
-        Email email = EmailBuilder.startingBlank()
-                .from("XMPP Compliance Tester", from)
-                .to(to)
-                .withSubject(subject)
-                .withHTMLText(html)
-                .withPlainText(plainText)
-                .buildEmail();
+    private static Email buildEmail(
+            String from, String to, String subject, String html, String plainText) {
+        Email email =
+                EmailBuilder.startingBlank()
+                        .from("XMPP Compliance Tester", from)
+                        .to(to)
+                        .withSubject(subject)
+                        .withHTMLText(html)
+                        .withPlainText(plainText)
+                        .buildEmail();
         return email;
     }
 
@@ -69,7 +70,8 @@ public class MailBuilder {
         return buildEmail(from, to, "Verify your E-Mail address", html, plainText);
     }
 
-    public List<Email> buildChangeEmails(HistoricalSnapshot.Change change, Iteration iteration, String domain) {
+    public List<Email> buildChangeEmails(
+            HistoricalSnapshot.Change change, Iteration iteration, String domain) {
         List<Subscriber> subscribers = DBOperations.getSubscribersFor(domain);
         List<Email> emails = new ArrayList<>();
         HashMap<String, Object> model = new HashMap<>();
@@ -87,9 +89,7 @@ public class MailBuilder {
                             subscriber.getEmail(),
                             "Changes in " + domain + "'s XMPP compliance results",
                             html,
-                            plainText
-                    )
-            );
+                            plainText));
         }
         return emails;
     }
@@ -112,9 +112,7 @@ public class MailBuilder {
                             subscriber.getEmail(),
                             "Authentication failed for " + credential.getJid().toString(),
                             html,
-                            plainText
-                    )
-            );
+                            plainText));
         }
         return emails;
     }
@@ -138,9 +136,7 @@ public class MailBuilder {
                             subscriber.getEmail(),
                             "Error while running Compliance Tester for " + domain,
                             html,
-                            plainText
-                    )
-            );
+                            plainText));
         }
         return emails;
     }
@@ -163,9 +159,7 @@ public class MailBuilder {
                             subscriber.getEmail(),
                             "Credentials updated for " + credential.getDomain(),
                             html,
-                            plainText
-                    )
-            );
+                            plainText));
         }
         return emails;
     }
@@ -179,5 +173,4 @@ public class MailBuilder {
         }
         return stringWriter.toString();
     }
-
 }

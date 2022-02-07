@@ -3,10 +3,9 @@ package im.conversations.compliance.utils;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
+import java.io.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.*;
 
 public class JsonReader<T> {
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonReader.class);
@@ -18,7 +17,7 @@ public class JsonReader<T> {
         this.typeClass = typeClass;
     }
 
-    //Ignore this
+    // Ignore this
     private JsonReader() {
         this.typeClass = null;
     }
@@ -33,8 +32,9 @@ public class JsonReader<T> {
             throw new RuntimeException("Invalid syntax in " + file.getName());
         }
     }
+
     public T read(InputStream inputStream) {
         LOGGER.info("Reading json file from inputstream");
-        return gson.fromJson(new InputStreamReader(inputStream),typeClass);
+        return gson.fromJson(new InputStreamReader(inputStream), typeClass);
     }
 }

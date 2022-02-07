@@ -1,12 +1,11 @@
 package im.conversations.compliance.xmpp.extensions.upload;
 
+import java.net.URL;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.net.URL;
 
-@XmlRootElement(name="get")
+@XmlRootElement(name = "get")
 public class Get {
 
-    @XmlAttribute
-    private URL url;
+    @XmlAttribute private URL url;
 }

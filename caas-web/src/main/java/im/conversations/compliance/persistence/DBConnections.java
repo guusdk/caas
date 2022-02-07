@@ -1,13 +1,12 @@
 package im.conversations.compliance.persistence;
 
+import static java.sql.Connection.TRANSACTION_SERIALIZABLE;
+
 import com.zaxxer.hikari.HikariDataSource;
 import im.conversations.compliance.pojo.Configuration;
+import java.util.Optional;
 import org.sql2o.Connection;
 import org.sql2o.Sql2o;
-
-import java.util.Optional;
-
-import static java.sql.Connection.TRANSACTION_SERIALIZABLE;
 
 public class DBConnections {
     private static DBConnections INSTANCE;
@@ -18,7 +17,8 @@ public class DBConnections {
         final HikariDataSource dataSource = new HikariDataSource();
         dataSource.setJdbcUrl(Configuration.getInstance().getDBUrl());
         dataSource.setJdbcUrl(Configuration.getInstance().getDBUrl());
-        Optional<Configuration.DbCredentials> credentials = Configuration.getInstance().getDbCredentials();
+        Optional<Configuration.DbCredentials> credentials =
+                Configuration.getInstance().getDbCredentials();
         if (credentials.isPresent()) {
             dataSource.setPassword(credentials.get().password);
             dataSource.setUsername(credentials.get().username);

@@ -29,9 +29,9 @@ public class Iteration {
     public boolean equals(Object o) {
         if (o instanceof Iteration) {
             Iteration i = (Iteration) o;
-            return begin.equals(i.begin) &&
-                    end.equals(i.end) &&
-                    i.iterationNumber == iterationNumber;
+            return begin.equals(i.begin)
+                    && end.equals(i.end)
+                    && i.iterationNumber == iterationNumber;
         }
         return false;
     }

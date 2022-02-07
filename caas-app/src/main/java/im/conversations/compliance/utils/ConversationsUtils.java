@@ -11,11 +11,13 @@ public class ConversationsUtils {
         final SecureRandom random = new SecureRandom();
         char[] output = new char[random.nextInt(4) * 2 + 5];
         boolean vowel = random.nextBoolean();
-        for(int i = 0; i < output.length; ++i) {
-            output[i] = vowel ? VOWELS[random.nextInt(VOWELS.length)] : CONSONANTS[random.nextInt(CONSONANTS.length)];
+        for (int i = 0; i < output.length; ++i) {
+            output[i] =
+                    vowel
+                            ? VOWELS[random.nextInt(VOWELS.length)]
+                            : CONSONANTS[random.nextInt(CONSONANTS.length)];
             vowel = !vowel;
         }
         return String.valueOf(output);
     }
-
 }

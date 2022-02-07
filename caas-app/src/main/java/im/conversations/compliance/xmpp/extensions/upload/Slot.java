@@ -2,7 +2,7 @@ package im.conversations.compliance.xmpp.extensions.upload;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-@XmlRootElement(name="slot")
+@XmlRootElement(name = "slot")
 public class Slot {
 
     private Put put;

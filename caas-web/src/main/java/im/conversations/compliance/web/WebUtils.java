@@ -4,25 +4,24 @@ import im.conversations.compliance.annotations.ComplianceTest;
 import im.conversations.compliance.pojo.Configuration;
 import im.conversations.compliance.pojo.Result;
 import im.conversations.compliance.xmpp.utils.TestUtils;
-import spark.Request;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import spark.Request;
 
 public class WebUtils {
 
-    private static String[] WELL_KNOWN_PING_TARGETS = new String[]{"8.8.8.8", "1.1.1.1"};
+    private static String[] WELL_KNOWN_PING_TARGETS = new String[] {"8.8.8.8", "1.1.1.1"};
 
     public static void addRootUrl(HashMap<String, Object> model, Request request) {
         model.put("root_url", getRootUrlFrom(request));
     }
 
     /**
-     * Gets root url for a request
-     * e.g. if request url is "https://compliance.conversations.im/badge/conversations.im",
-     * it will return "https://compliance.conversations.im"
+     * Gets root url for a request e.g. if request url is
+     * "https://compliance.conversations.im/badge/conversations.im", it will return
+     * "https://compliance.conversations.im"
      *
      * @param request
      * @return
@@ -40,7 +39,7 @@ public class WebUtils {
     /**
      * Adds pass,result and stats to model
      *
-     * @param model   The map to which pass,result and stats will be added
+     * @param model The map to which pass,result and stats will be added
      * @param results The results from which the stats will be calculated
      */
     public static void addResultStats(HashMap<String, Object> model, List<Result> results) {
@@ -60,29 +59,32 @@ public class WebUtils {
         int percent = pass * 100 / total;
         model.put("pass", pass);
         model.put("total", total);
-        model.put("stats", new HashMap<String, String>() {
-            {
-                put("Specifications compliant", percent + "%");
-            }
-        });
+        model.put(
+                "stats",
+                new HashMap<String, String>() {
+                    {
+                        put("Specifications compliant", percent + "%");
+                    }
+                });
     }
 
-    public static void addDataForComplianceTable(HashMap<String, Object> model, Map<String, HashMap<String, Boolean>> resultsByServer) {
+    public static void addDataForComplianceTable(
+            HashMap<String, Object> model, Map<String, HashMap<String, Boolean>> resultsByServer) {
         HashMap<String, String> percentByServer = new HashMap<>();
-        resultsByServer.keySet().forEach(
-                domain ->
-                {
-                    int total = resultsByServer.get(domain).size();
-                    int success = resultsByServer.get(domain)
-                            .values()
-                            .stream()
-                            .map(it -> it ? 1 : 0)
-                            .reduce((it, val) -> it + val)
-                            .get();
-                    String percent = (success * 100 / total) + "% (" + success + "/" + total + ")";
-                    percentByServer.put(domain, percent);
-                }
-        );
+        resultsByServer
+                .keySet()
+                .forEach(
+                        domain -> {
+                            int total = resultsByServer.get(domain).size();
+                            int success =
+                                    resultsByServer.get(domain).values().stream()
+                                            .map(it -> it ? 1 : 0)
+                                            .reduce((it, val) -> it + val)
+                                            .get();
+                            String percent =
+                                    (success * 100 / total) + "% (" + success + "/" + total + ")";
+                            percentByServer.put(domain, percent);
+                        });
         List<ComplianceTest> complianceTests = TestUtils.getComplianceTests();
         model.put("tests", complianceTests);
         model.put("percentByServer", percentByServer);
