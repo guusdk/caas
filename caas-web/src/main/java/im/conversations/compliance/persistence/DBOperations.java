@@ -93,8 +93,8 @@ public class DBOperations {
     }
 
     public static Optional<Server> getServer(String domain) {
-        Server server;
-        try (Connection connection = DBConnections.getInstance().getConnection(false)) {
+        final Server server;
+        try (final Connection connection = DBConnections.getInstance().getConnection(false)) {
             server = InternalDBOperations.getServer(connection, domain);
         }
         return Optional.ofNullable(server);
