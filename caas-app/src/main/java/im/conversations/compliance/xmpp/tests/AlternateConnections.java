@@ -168,19 +168,17 @@ public class AlternateConnections extends AbstractTest {
     }
 
     private boolean discoverAndTestAltConnections(final String domain) {
-        return discoverAndTestAltConnections(domain, false, true)
-                || discoverAndTestAltConnections(domain, true, true)
-                || discoverAndTestAltConnections(domain, false, false)
-                || discoverAndTestAltConnections(domain, true, false);
+        return discoverAndTestAltConnections(domain, false)
+                || discoverAndTestAltConnections(domain, true);
     }
 
     private boolean discoverAndTestAltConnections(
-            final String domain, final boolean json, final boolean https) {
+            final String domain, final boolean json) {
         final OkHttpClient okHttpClient = new OkHttpClient();
         try {
             final URL url =
                     new URL(
-                            https ? "https" : "http",
+                            "https",
                             domain,
                             "/.well-known/host-meta" + (json ? ".json" : ""));
             LOGGER.debug(String.format("checking on %s ", url.toString()));
