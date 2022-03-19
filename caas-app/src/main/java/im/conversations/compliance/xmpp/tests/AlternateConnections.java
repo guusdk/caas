@@ -130,7 +130,9 @@ public class AlternateConnections extends AbstractTest {
                 return false;
             } else {
                 final boolean corsHeaders =
-                        containsIgnoreCase(headers, "Access-Control-Allow-Origin", "*");
+                        containsIgnoreCase(headers, "Access-Control-Allow-Origin", "*")
+                                || containsIgnoreCase(
+                                        headers, "Access-Control-Allow-Origin", "null");
                 if (response.code() <= 299 && corsHeaders) {
                     return true;
                 }
