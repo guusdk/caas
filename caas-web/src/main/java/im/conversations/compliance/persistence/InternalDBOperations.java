@@ -433,11 +433,13 @@ public class InternalDBOperations {
         table.rows()
                 .forEach(
                         row -> {
-                            String test = row.getString("test");
-                            boolean success = row.getBoolean("success");
-                            ComplianceTest complianceTest = TestUtils.getTestFrom(test);
-                            Result result = new Result(complianceTest, success);
-                            results.add(result);
+                            final String test = row.getString("test");
+                            final boolean success = row.getBoolean("success");
+                            final ComplianceTest complianceTest = TestUtils.getTestFrom(test);
+                            if (complianceTest != null) {
+                                final Result result = new Result(complianceTest, success);
+                                results.add(result);
+                            }
                         });
         return results;
     }
@@ -537,10 +539,14 @@ public class InternalDBOperations {
         ArrayList<Result> r =
                 table.rows().stream()
                         .map(
-                                row ->
-                                        new Result(
-                                                TestUtils.getTestFrom(row.getString("test")),
-                                                row.getBoolean("success")))
+                                row -> {
+                                    final ComplianceTest test =
+                                            TestUtils.getTestFrom(row.getString("test"));
+                                    return test == null
+                                            ? null
+                                            : new Result(test, row.getBoolean("success"));
+                                })
+                        .filter(Objects::nonNull)
                         .collect(Collectors.toCollection(ArrayList::new));
         return r;
     }

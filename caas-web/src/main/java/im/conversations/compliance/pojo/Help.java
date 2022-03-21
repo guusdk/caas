@@ -1,5 +1,6 @@
 package im.conversations.compliance.pojo;
 
+import im.conversations.compliance.xmpp.utils.TestUtils;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -113,7 +114,9 @@ public class Help {
                                 }
                                 String testName =
                                         testFileName.substring(0, (testFileName.length() - 3));
-                                helpForThisSoftware.put(testName, htmlText);
+                                if (TestUtils.getAllTestNames().contains(testName)) {
+                                    helpForThisSoftware.put(testName, htmlText);
+                                }
                             } catch (IOException e) {
                                 e.printStackTrace();
                             }

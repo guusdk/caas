@@ -9,7 +9,7 @@ import rocks.xmpp.core.session.XmppClient;
         short_name = "xep0402",
         full_name = "XEP-0402: PEP Native Bookmarks",
         url = "https://xmpp.org/extensions/xep-0402.html",
-        description = "Converts between Private XML, legacy PEP, and native PEP bookmarks",
+        description = "Converts between PrivateXML, legacy PEP, and native PEP bookmarks",
         informational = true)
 public class Bookmark2Conversion extends AbstractDiscoTest {
 
